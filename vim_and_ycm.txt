@@ -1,0 +1,28 @@
+===================
+make and install vim just python and install in apps
+===================
+
+this is the default, with python 2 enabled (turned off by default)
+
+./configure --enable-pythoninterp=yes --prefix=/apps/santis/vim/7.4
+
+
+=======================
+THEN MAKE YouCompleteME
+=======================
+
+the PATH_TO_LLVM_ROOT is the path where libclang.so can be found. I used a version that
+I compiled myself, though this isn't recommended.
+
+I had to export CC and CXX, because the Cray compiler wrappers for gcc caused an odd
+linking error.
+
+cd ${path_to_vim_config}/bundle/YouCompleteMe
+mkdir build
+cd build
+export CC=`which gcc`
+export CXX=`which g++`
+cmake -G "Unix Makefiles" -DPATH_TO_LLVM_ROOT=/apps/daint/clang/3.4/ . ../third_party/ycmd/cpp
+ccmake .
+.... and turn on support for Clang code completion for C-family
+
