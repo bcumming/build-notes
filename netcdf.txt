@@ -1,0 +1,56 @@
+
+# log onto greina
+ssh greina30
+
+module load gcc/4.8.4
+
+export BASE=`pwd`
+export INSTALL_PATH=${BASE}/lib
+
+# -------------------
+# zlib 1.2.8
+# -------------------
+wget http://zlib.net/zlib-1.2.8.tar.gz
+tar -xzvf zlib-1.2.8.tar.gz
+cd zlib-1.2.8
+./configure --prefix=${INSTALL_PATH}
+cd $BASE
+
+# -------------------
+# HDF5 1.8.12
+# -------------------
+wget https://www.hdfgroup.org/ftp/HDF5/releases/hdf5-1.8.12/src/hdf5-1.8.12.tar.gz
+tar -xzvf hdf5-1.8.12.tar.gz
+cd hdf5-1.8.12
+./configure --prefix=${INSTALL_PATH} --with-zlib=${INSTALL_PATH}
+make
+make check
+make install
+cd $BASE
+
+# -------------------
+# netcdf 4.3.3.1
+# -------------------
+
+# set flags used by configure
+export CPPFLAGS=-I${INSTALL_PATH}/include
+export CFLAGS=-I${INSTALL_PATH}/include
+export FCFLAGS=-L${INSTALL_PATH}/lib
+
+export LDFLAGS=-L${INSTALL_PATH}/lib
+export LD_LIBRARY_PATH="${INSTALL_PATH}/lib:$LD_LIBRARY_PATH"
+
+# first build c/c++ version
+wget https://github.com/Unidata/netcdf-c/archive/v4.3.3.1.tar.gz
+tar -xzvf v4.3.3.1.tar.gz
+cd netcdf-c-4.3.3.1
+./configure --prefix=${INSTALL_PATH}
+CD ${BASE}
+
+# then then fortran version
+wget ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-fortran-4.4.2.tar.gz
+tar -xzvf netcdf-fortran-4.4.2.tar.gz
+cd netcdf-fortran-4.4.2
+./configure --disable-fortran-type-check --prefix=${INSTALL_PATH}
+make install
+CD ${BASE}
